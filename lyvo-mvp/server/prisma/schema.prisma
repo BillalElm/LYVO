@@ -1,0 +1,48 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  role      Role
+  email     String   @unique
+  name      String?
+  phone     String?
+  createdAt DateTime @default(now())
+  bookings  Booking[]
+}
+
+enum Role { CLIENT PRO ADMIN }
+
+model Service {
+  id        String   @id @default(cuid())
+  slug      String   @unique
+  label     String
+  basePrice Int
+  createdAt DateTime @default(now())
+  bookings  Booking[]
+}
+
+model Booking {
+  id        String   @id @default(cuid())
+  service   Service  @relation(fields: [serviceId], references: [id])
+  serviceId String
+  client    User     @relation(fields: [clientId], references: [id])
+  clientId  String
+  pro       User?    @relation(fields: [proId], references: [id])
+  proId     String?
+  address   String
+  datetime  String
+  notes     String?
+  amount    Int
+  status    BookingStatus @default(PENDING)
+  paymentId String?
+  createdAt DateTime @default(now())
+}
+
+enum BookingStatus { PENDING ACCEPTED IN_PROGRESS DONE CANCELED }

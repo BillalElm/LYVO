@@ -1,3 +1,5 @@
+'use client'
+
 export default function Hero() {
   return (
     <section className="relative min-h-screen flex flex-col justify-center overflow-hidden bg-slate-950">
@@ -65,7 +67,7 @@ export default function Hero() {
         <div className="mt-20 grid grid-cols-1 sm:grid-cols-3 gap-px bg-white/5 rounded-2xl overflow-hidden border border-white/5">
           {[
             { value: '< 30 jours', label: 'Pour voir les premiers résultats' },
-            { value: '179 €/mois', label: 'Moins cher qu'un stagiaire' },
+            { value: '179 €/mois', label: "Moins cher qu'un stagiaire" },
             { value: '100 %', label: 'Des actions tracées et auditables' },
           ].map((stat) => (
             <div key={stat.label} className="bg-white/2 hover:bg-white/4 transition-colors px-8 py-6 text-center">

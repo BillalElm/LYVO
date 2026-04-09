@@ -1,3 +1,5 @@
+'use client'
+
 const cases = [
   {
     sector: 'BTP — Entreprise de rénovation',

@@ -1,3 +1,5 @@
+'use client'
+
 export default function FinalCta() {
   return (
     <section id="diagnostic" className="py-24 md:py-32 bg-slate-950 relative overflow-hidden">

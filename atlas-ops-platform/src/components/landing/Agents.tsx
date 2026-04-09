@@ -1,3 +1,5 @@
+'use client'
+
 export default function Agents() {
   return (
     <section id="agents" className="py-24 md:py-32 bg-slate-950 relative overflow-hidden">
@@ -124,7 +126,7 @@ export default function Agents() {
               <div className="mt-8 grid grid-cols-2 gap-4">
                 {[
                   { value: '< 2 min', label: 'Délai de traitement moyen' },
-                  { value: '24h/24', label: 'Disponibilité de l'agent' },
+                  { value: '24h/24', label: "Disponibilité de l'agent" },
                 ].map((s) => (
                   <div key={s.label} className="bg-slate-900 rounded-2xl p-4 border border-white/5 text-center">
                     <div className="text-xl font-bold text-white">{s.value}</div>
@@ -140,8 +142,8 @@ export default function Agents() {
         <div className="mt-12 grid md:grid-cols-3 gap-6">
           {[
             {
-              title: 'Agit, n'attend pas',
-              body: 'L'agent détecte les situations qui nécessitent une action et les traite, sans que vous ayez à y penser.',
+              title: "Agit, n'attend pas",
+              body: "L'agent détecte les situations qui nécessitent une action et les traite, sans que vous ayez à y penser.",
             },
             {
               title: 'Périmètre validé par vous',

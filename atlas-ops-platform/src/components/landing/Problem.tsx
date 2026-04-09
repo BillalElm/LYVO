@@ -1,3 +1,5 @@
+'use client'
+
 export default function Problem() {
   const pains = [
     {
@@ -8,7 +10,7 @@ export default function Problem() {
     {
       icon: '📱',
       title: 'Des demandes qui tombent à côté',
-      body: 'Un prospect contacte votre WhatsApp un samedi à 17h. Vous rappellez lundi matin. Il a déjà choisi un concurrent qui a répondu dans l'heure.',
+      body: "Un prospect contacte votre WhatsApp un samedi à 17h. Vous rappellez lundi matin. Il a déjà choisi un concurrent qui a répondu dans l'heure.",
     },
     {
       icon: '⏳',

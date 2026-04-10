@@ -1,0 +1,435 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ============================================================================
+// AUTHENTIFICATION & UTILISATEURS
+// ============================================================================
+
+model User {
+  id            String    @id @default(cuid())
+  email         String    @unique
+  name          String?
+  phone         String?
+  role          UserRole  @default(CLIENT)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  // Relations auth
+  otpCodes      OtpCode[]
+  sessions      Session[]
+
+  // Relations métier (admin / back-office)
+  managedClients  Client[]   @relation("AccountManager")
+
+  // Relation client
+  client        Client?    @relation("ClientUser")
+}
+
+model OtpCode {
+  id        String   @id @default(cuid())
+  code      String
+  email     String
+  expiresAt DateTime
+  used      Boolean  @default(false)
+  userId    String?
+  user      User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@index([email, code])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expires      DateTime
+  createdAt    DateTime @default(now())
+}
+
+enum UserRole {
+  ADMIN
+  CLIENT
+}
+
+// ============================================================================
+// CRM — PROSPECTS
+// ============================================================================
+
+model Prospect {
+  id              String          @id @default(cuid())
+  companyName     String
+  contactName     String
+  contactEmail    String?
+  contactPhone    String?
+  sector          Sector
+  source          ProspectSource  @default(TERRAIN)
+  status          ProspectStatus  @default(IDENTIFIED)
+  notes           String?
+  estimatedQuotes Int?            // devis/mois estimés
+  estimatedHours  Float?          // heures/semaine sur relances estimées
+  diagnosticDate  DateTime?
+  diagnosticNotes String?
+  recommendedPack Pack?
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+
+  // Relations
+  activities      Activity[]
+  client          Client?         // converti en client
+
+  @@index([status])
+  @@index([sector])
+}
+
+enum Sector {
+  BTP
+  CABINET_COMPTABLE
+  CABINET_IMMOBILIER
+  CABINET_CONSEIL
+  AGENCE
+  PME_SERVICES
+  AUTRE
+}
+
+enum ProspectSource {
+  TERRAIN
+  LINKEDIN
+  SITE_WEB
+  RECOMMANDATION
+  SALON
+  AUTRE
+}
+
+enum ProspectStatus {
+  IDENTIFIED       // identifié, pas encore contacté
+  CONTACTED        // premier contact réalisé
+  DIAGNOSTIC_PLANNED // diagnostic planifié
+  DIAGNOSTIC_DONE  // diagnostic réalisé
+  PROPOSAL_SENT    // devis envoyé
+  NEGOTIATION      // en négociation
+  WON              // gagné → converti en Client
+  LOST             // perdu
+  DISQUALIFIED     // hors cible
+}
+
+// ============================================================================
+// CRM — CLIENTS
+// ============================================================================
+
+model Client {
+  id              String        @id @default(cuid())
+  companyName     String
+  legalForm       String?       // SASU, SARL, etc.
+  siren           String?
+  address         String?
+  city            String?
+  postalCode      String?
+  contactName     String
+  contactEmail    String
+  contactPhone    String?
+  sector          Sector
+  pack            Pack
+  status          ClientStatus  @default(ACTIVE)
+  contractStartDate DateTime?
+  contractEndDate   DateTime?
+  monthlyAmount   Float         // montant mensuel HT
+  setupAmount     Float         // frais de mise en place HT
+  notes           String?
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  // Relations
+  userId          String?       @unique
+  user            User?         @relation("ClientUser", fields: [userId], references: [id])
+  managerId       String?
+  manager         User?         @relation("AccountManager", fields: [managerId], references: [id])
+  prospectId      String?       @unique
+  prospect        Prospect?     @relation(fields: [prospectId], references: [id])
+  agents          Agent[]
+  invoices        Invoice[]
+  quotes          Quote[]
+  reports         MonthlyReport[]
+  activities      Activity[]
+
+  @@index([status])
+  @@index([pack])
+}
+
+enum Pack {
+  PILOTE
+  STANDARD
+  DUO
+}
+
+enum ClientStatus {
+  ONBOARDING      // en phase de démarrage
+  ACTIVE          // en production
+  PAUSED          // suspendu (impayé, etc.)
+  CHURNED         // résilié
+}
+
+// ============================================================================
+// AGENTS IA
+// ============================================================================
+
+model Agent {
+  id              String       @id @default(cuid())
+  clientId        String
+  client          Client       @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  type            AgentType
+  name            String       // ex: "Relance commerciale — Martin SARL"
+  status          AgentStatus  @default(CONFIGURING)
+  channel         Channel      @default(EMAIL)
+  triggerDelayH   Int          @default(48)  // délai de déclenchement en heures
+  scheduleStart   String       @default("08:00") // plage horaire début
+  scheduleEnd     String       @default("18:00") // plage horaire fin
+  scheduleDays    String       @default("1,2,3,4,5") // jours actifs (1=lundi)
+  escalationContact String?    // email ou tel du contact d'escalade
+  configNotes     String?
+  goLiveDate      DateTime?    // date de mise en production
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
+
+  // Relations
+  actions         AgentAction[]
+  metrics         AgentMetric[]
+
+  @@index([clientId])
+  @@index([status])
+}
+
+enum AgentType {
+  RELANCE
+  FLOW
+}
+
+enum AgentStatus {
+  CONFIGURING     // en phase de configuration
+  TESTING         // en test
+  LIVE            // en production
+  PAUSED          // suspendu
+  STOPPED         // arrêté
+}
+
+enum Channel {
+  EMAIL
+  WHATSAPP
+  BOTH
+}
+
+// Journal d'activité de l'agent
+model AgentAction {
+  id          String          @id @default(cuid())
+  agentId     String
+  agent       Agent           @relation(fields: [agentId], references: [id], onDelete: Cascade)
+  type        ActionType
+  contactName String?
+  contactRef  String?         // référence du devis ou de la demande
+  channel     Channel?
+  status      ActionStatus    @default(SENT)
+  details     String?
+  createdAt   DateTime        @default(now())
+
+  @@index([agentId, createdAt])
+  @@index([status])
+}
+
+enum ActionType {
+  RELANCE_J2
+  RELANCE_J5
+  ESCALADE_J7
+  FLOW_RECEIVED
+  FLOW_QUALIFIED
+  FLOW_RESPONDED
+  FLOW_ESCALATED
+  ALERT
+}
+
+enum ActionStatus {
+  SENT
+  DELIVERED
+  READ
+  RESPONDED
+  FAILED
+  ESCALATED
+}
+
+// Métriques mensuelles de l'agent
+model AgentMetric {
+  id                    String   @id @default(cuid())
+  agentId               String
+  agent                 Agent    @relation(fields: [agentId], references: [id], onDelete: Cascade)
+  month                 DateTime // premier jour du mois
+  // Atlas Relance
+  quotesIdentified      Int      @default(0)
+  relancesSent          Int      @default(0)
+  relancesJ2            Int      @default(0)
+  relancesJ5            Int      @default(0)
+  escalations           Int      @default(0)
+  responsesReceived     Int      @default(0)
+  quotesSignedAfter     Int      @default(0)
+  estimatedRevenue      Float    @default(0) // montant estimé récupéré
+  // Atlas Flow
+  requestsReceived      Int      @default(0)
+  requestsAutoResolved  Int      @default(0)
+  requestsEscalated     Int      @default(0)
+  medianResponseTimeMin Float?
+  // Commun
+  uptimePercent         Float    @default(100)
+  createdAt             DateTime @default(now())
+
+  @@unique([agentId, month])
+  @@index([agentId])
+}
+
+// ============================================================================
+// FACTURATION
+// ============================================================================
+
+model Quote {
+  id            String       @id @default(cuid())
+  number        String       @unique // ex: DEV-2026-001
+  clientId      String
+  client        Client       @relation(fields: [clientId], references: [id])
+  status        QuoteStatus  @default(DRAFT)
+  pack          Pack
+  setupAmount   Float        // frais de mise en place HT
+  monthlyAmount Float        // mensuel HT
+  commitment    Int          // engagement en mois
+  hostingAmount Float        @default(15) // hébergement mensuel HT
+  customItems   Json?        // lignes supplémentaires [{label, amount}]
+  totalHT       Float
+  tvaRate       Float        @default(20)
+  totalTTC      Float
+  validUntil    DateTime     // validité du devis (30 jours)
+  notes         String?
+  sentAt        DateTime?
+  signedAt      DateTime?
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+
+  // Conversion en facture
+  invoice       Invoice?
+
+  @@index([clientId])
+  @@index([status])
+}
+
+enum QuoteStatus {
+  DRAFT
+  SENT
+  SIGNED
+  REFUSED
+  EXPIRED
+}
+
+model Invoice {
+  id            String         @id @default(cuid())
+  number        String         @unique // ex: FAC-2026-001
+  clientId      String
+  client        Client         @relation(fields: [clientId], references: [id])
+  quoteId       String?        @unique
+  quote         Quote?         @relation(fields: [quoteId], references: [id])
+  type          InvoiceType
+  status        InvoiceStatus  @default(DRAFT)
+  issueDate     DateTime       @default(now())
+  dueDate       DateTime       // date d'échéance (net 30)
+  periodStart   DateTime?      // début période facturée (pour les mensuels)
+  periodEnd     DateTime?      // fin période facturée
+  items         Json           // [{label, quantity, unitPrice, total}]
+  subtotalHT    Float
+  tvaRate       Float          @default(20)
+  tvaAmount     Float
+  totalTTC      Float
+  paidAt        DateTime?
+  paidAmount    Float?
+  paymentMethod String?
+  notes         String?
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+
+  @@index([clientId])
+  @@index([status])
+  @@index([dueDate])
+}
+
+enum InvoiceType {
+  SETUP          // facture de mise en place
+  MONTHLY        // facture mensuelle
+  HOSTING        // facture hébergement
+  CUSTOM         // prestation complémentaire
+}
+
+enum InvoiceStatus {
+  DRAFT
+  SENT
+  PAID
+  OVERDUE
+  CANCELLED
+}
+
+// ============================================================================
+// RAPPORTS MENSUELS
+// ============================================================================
+
+model MonthlyReport {
+  id              String   @id @default(cuid())
+  clientId        String
+  client          Client   @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  month           DateTime // premier jour du mois
+  summary         String?  // résumé en texte libre
+  analysis        String?  // analyse qualitative
+  recommendations String?  // recommandations
+  adjustments     String?  // ajustements réalisés
+  hoursEstimated  Float?   // heures libérées estimées
+  roiEstimated    Float?   // ROI estimé
+  sentAt          DateTime?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@unique([clientId, month])
+  @@index([clientId])
+}
+
+// ============================================================================
+// JOURNAL D'ACTIVITÉ (CRM)
+// ============================================================================
+
+model Activity {
+  id          String        @id @default(cuid())
+  type        ActivityType
+  title       String
+  description String?
+  prospectId  String?
+  prospect    Prospect?     @relation(fields: [prospectId], references: [id], onDelete: Cascade)
+  clientId    String?
+  client      Client?       @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  createdAt   DateTime      @default(now())
+
+  @@index([prospectId])
+  @@index([clientId])
+  @@index([createdAt])
+}
+
+enum ActivityType {
+  CALL
+  EMAIL
+  VISIT
+  MEETING
+  DIAGNOSTIC
+  PROPOSAL
+  CONTRACT_SIGNED
+  NOTE
+  FOLLOW_UP
+  ONBOARDING_STEP
+  REPORT_SENT
+  INVOICE_SENT
+  PAYMENT_RECEIVED
+}

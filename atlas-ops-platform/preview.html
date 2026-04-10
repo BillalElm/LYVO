@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ATLAS OPS — Prévisualisation</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: { sans: ['Inter', 'sans-serif'] },
+          colors: {
+            atlas: {
+              50: '#eff6ff', 100: '#dbeafe', 200: '#bfdbfe', 300: '#93c5fd',
+              400: '#60a5fa', 500: '#3b82f6', 600: '#2563eb', 700: '#1d4ed8',
+              800: '#1e40af', 900: '#1e3a8f', 950: '#172554',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body { font-family: 'Inter', sans-serif; }
+    .text-gradient {
+      background: linear-gradient(135deg, #60a5fa, #818cf8);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .grid-pattern {
+      background-image:
+        linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+      background-size: 40px 40px;
+    }
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
+    .animate-pulse { animation: pulse 2s cubic-bezier(.4,0,.6,1) infinite; }
+  </style>
+</head>
+<body class="bg-white text-slate-900 antialiased">
+
+  <!-- NAV -->
+  <nav class="fixed top-0 left-0 right-0 z-50 bg-slate-950/90 backdrop-blur border-b border-white/5">
+    <div class="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
+      <span class="text-white font-black text-lg tracking-tight">ATLAS <span class="text-atlas-400">OPS</span></span>
+      <div class="hidden md:flex items-center gap-8 text-sm text-slate-400">
+        <a href="#agents" class="hover:text-white transition-colors">Les agents</a>
+        <a href="#comment" class="hover:text-white transition-colors">Comment ça marche</a>
+        <a href="#tarifs" class="hover:text-white transition-colors">Tarifs</a>
+      </div>
+      <a href="#contact" class="text-sm font-semibold bg-atlas-600 hover:bg-atlas-500 text-white px-4 py-2 rounded-lg transition-colors">
+        Diagnostic gratuit
+      </a>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <section class="relative min-h-screen flex flex-col justify-center overflow-hidden bg-slate-950 pt-16">
+    <div class="absolute inset-0 grid-pattern opacity-60"></div>
+    <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
+      <div style="width:800px;height:600px;background:rgba(37,99,235,0.08);border-radius:50%;filter:blur(120px)"></div>
+    </div>
+
+    <div class="relative max-w-7xl mx-auto px-6 lg:px-8 py-32 text-center">
+      <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-atlas-500/20 bg-atlas-600/10 mb-8">
+        <span class="w-1.5 h-1.5 rounded-full bg-atlas-400 animate-pulse"></span>
+        <span class="text-xs font-semibold text-atlas-300 tracking-widest uppercase">Agents IA métier · TPE & PME</span>
+      </div>
+
+      <h1 class="text-5xl md:text-7xl font-black tracking-tight text-white leading-[1.05] mb-6">
+        L'agent qui relance.<br>
+        <span class="text-gradient">Vous décidez.</span>
+      </h1>
+
+      <p class="text-xl text-slate-400 max-w-2xl mx-auto mb-10 leading-relaxed">
+        Atlas Ops déploie des agents autonomes qui relancent vos devis, traitent vos demandes entrantes
+        et vous alertent — pendant que vous faites votre métier.
+      </p>
+
+      <div class="flex flex-col sm:flex-row gap-4 justify-center">
+        <a href="#contact" class="inline-flex items-center justify-center gap-2 bg-atlas-600 hover:bg-atlas-500 text-white font-semibold px-8 py-4 rounded-xl text-base transition-all shadow-lg shadow-atlas-900/30">
+          Diagnostic gratuit — 30 min
+          <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+        </a>
+        <a href="#agents" class="inline-flex items-center justify-center gap-2 bg-white/5 hover:bg-white/10 text-white font-semibold px-8 py-4 rounded-xl text-base border border-white/10 transition-all">
+          Voir les agents
+        </a>
+      </div>
+
+      <!-- Stats -->
+      <div class="mt-20 grid grid-cols-1 sm:grid-cols-3 gap-px bg-white/5 rounded-2xl overflow-hidden border border-white/5 max-w-2xl mx-auto">
+        <div class="bg-slate-950/80 px-8 py-6 text-center">
+          <div class="text-2xl font-bold text-white mb-1">&lt; 30 jours</div>
+          <div class="text-xs text-slate-500">Pour voir les premiers résultats</div>
+        </div>
+        <div class="bg-slate-950/80 px-8 py-6 text-center border-x border-white/5">
+          <div class="text-2xl font-bold text-white mb-1">179 €/mois</div>
+          <div class="text-xs text-slate-500">Moins cher qu'un stagiaire</div>
+        </div>
+        <div class="bg-slate-950/80 px-8 py-6 text-center">
+          <div class="text-2xl font-bold text-white mb-1">100 %</div>
+          <div class="text-xs text-slate-500">Des actions tracées et auditables</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PROBLÈME -->
+  <section class="py-24 bg-white">
+    <div class="max-w-7xl mx-auto px-6 lg:px-8">
+      <div class="text-center mb-16">
+        <span class="text-xs font-semibold text-atlas-600 tracking-widest uppercase">Le problème</span>
+        <h2 class="mt-4 text-4xl md:text-5xl font-black tracking-tight text-slate-900 max-w-3xl mx-auto leading-tight">
+          Vous perdez des marchés sans le savoir.
+        </h2>
+        <p class="mt-5 text-lg text-slate-500 max-w-2xl mx-auto">
+          Pas par manque de compétence. Par manque de système.
+        </p>
+      </div>
+      <div class="grid md:grid-cols-3 gap-8">
+        <div class="bg-slate-50 rounded-3xl p-8 border border-slate-100">
+          <div class="text-3xl mb-4">📋</div>
+          <h3 class="text-lg font-bold text-slate-900 mb-2">Des devis sans réponse</h3>
+          <p class="text-slate-500 leading-relaxed">Vous envoyez 15 devis par mois. 5 restent sans réponse. Pas parce que le client n'est pas intéressé — mais parce qu'il attendait une relance.</p>
+        </div>
+        <div class="bg-slate-50 rounded-3xl p-8 border border-slate-100">
+          <div class="text-3xl mb-4">📱</div>
+          <h3 class="text-lg font-bold text-slate-900 mb-2">Des demandes qui tombent à côté</h3>
+          <p class="text-slate-500 leading-relaxed">Un prospect contacte votre WhatsApp un samedi à 17h. Vous rappelez lundi matin. Il a déjà choisi un concurrent qui a répondu dans l'heure.</p>
+        </div>
+        <div class="bg-slate-50 rounded-3xl p-8 border border-slate-100">
+          <div class="text-3xl mb-4">⏳</div>
+          <h3 class="text-lg font-bold text-slate-900 mb-2">Du temps perdu</h3>
+          <p class="text-slate-500 leading-relaxed">Trier les emails, relancer manuellement, qualifier les demandes — tout ça prend des heures chaque semaine sans produire de marge.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- AGENTS -->
+  <section id="agents" class="py-24 bg-slate-950 relative overflow-hidden">
+    <div class="absolute inset-0 grid-pattern opacity-40"></div>
+    <div class="relative max-w-7xl mx-auto px-6 lg:px-8">
+      <div class="text-center mb-20">
+        <span class="text-xs font-semibold text-atlas-400 tracking-widest uppercase">Les agents</span>
+        <h2 class="mt-4 text-4xl md:text-5xl font-black tracking-tight text-white max-w-3xl mx-auto leading-tight">
+          Deux agents. Une seule règle : <span class="text-gradient">agir, pas attendre.</span>
+        </h2>
+      </div>
+
+      <div class="grid lg:grid-cols-2 gap-8">
+        <!-- Atlas Relance -->
+        <div class="bg-white/5 border border-white/10 rounded-3xl p-8 md:p-10">
+          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-atlas-600/20 border border-atlas-500/20 mb-6">
+            <span class="w-1.5 h-1.5 rounded-full bg-atlas-400 animate-pulse"></span>
+            <span class="text-atlas-300 text-xs font-semibold tracking-wide">Agent 01</span>
+          </div>
+          <h3 class="text-2xl md:text-3xl font-black text-white mb-2">Atlas Relance</h3>
+          <p class="text-atlas-400 font-medium mb-6">Zéro devis sans réponse.</p>
+          <p class="text-slate-400 leading-relaxed mb-8">
+            Votre agent surveille chaque devis envoyé. Dès 48h sans réponse, il prend l'initiative — message personnalisé, ton adapté, suivi automatique. À J+7, c'est vous qui décidez de la suite.
+          </p>
+          <div class="space-y-3">
+            <div class="flex items-center gap-4">
+              <div class="w-12 text-center text-xs font-bold px-2 py-1 rounded-lg bg-atlas-600/30 text-atlas-300 border border-atlas-500/30">J+2</div>
+              <span class="text-sm text-slate-400">Première relance personnalisée</span>
+            </div>
+            <div class="flex items-center gap-4">
+              <div class="w-12 text-center text-xs font-bold px-2 py-1 rounded-lg bg-white/5 text-slate-500 border border-white/5">J+5</div>
+              <span class="text-sm text-slate-400">Deuxième prise de contact</span>
+            </div>
+            <div class="flex items-center gap-4">
+              <div class="w-12 text-center text-xs font-bold px-2 py-1 rounded-lg bg-white/5 text-slate-500 border border-white/5">J+7</div>
+              <span class="text-sm text-slate-400">Alerte dirigeant — vous prenez la main</span>
+            </div>
+          </div>
+          <div class="mt-8 bg-slate-900 rounded-2xl p-5 border border-white/5">
+            <p class="text-xs text-slate-500 mb-2">Agent Atlas Relance · J+5</p>
+            <p class="text-sm text-slate-300 leading-relaxed">"Votre devis n°2047 pour Martin SARL (rénovation façade, 14 500 €) est sans réponse depuis 5 jours. 2 relances envoyées. <span class="text-atlas-400">Souhaitez-vous intervenir en direct ?</span>"</p>
+          </div>
+        </div>
+
+        <!-- Atlas Flow -->
+        <div class="bg-white/5 border border-white/10 rounded-3xl p-8 md:p-10">
+          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-600/20 border border-indigo-500/20 mb-6">
+            <span class="w-1.5 h-1.5 rounded-full bg-indigo-400 animate-pulse"></span>
+            <span class="text-indigo-300 text-xs font-semibold tracking-wide">Agent 02 — Pack Duo</span>
+          </div>
+          <h3 class="text-2xl md:text-3xl font-black text-white mb-2">Atlas Flow</h3>
+          <p class="text-indigo-400 font-medium mb-6">Chaque demande traitée. Aucune perdue.</p>
+          <p class="text-slate-400 leading-relaxed mb-8">
+            Toutes vos demandes entrantes — email, WhatsApp, formulaire — arrivent au même endroit. L'agent trie, qualifie, répond aux questions simples et vous alerte sur ce qui nécessite votre expertise.
+          </p>
+          <div class="space-y-3">
+            <div class="flex items-center gap-3">
+              <div class="w-5 h-5 rounded-full bg-indigo-600/20 border border-indigo-500/20 flex items-center justify-center flex-shrink-0">
+                <svg class="w-2.5 h-2.5 text-indigo-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
+              </div>
+              <span class="text-sm text-slate-400">Centralisation de tous les canaux entrants</span>
+            </div>
+            <div class="flex items-center gap-3">
+              <div class="w-5 h-5 rounded-full bg-indigo-600/20 border border-indigo-500/20 flex items-center justify-center flex-shrink-0">
+                <svg class="w-2.5 h-2.5 text-indigo-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
+              </div>
+              <span class="text-sm text-slate-400">Tri automatique : urgence, devis, SAV, info</span>
+            </div>
+            <div class="flex items-center gap-3">
+              <div class="w-5 h-5 rounded-full bg-indigo-600/20 border border-indigo-500/20 flex items-center justify-center flex-shrink-0">
+                <svg class="w-2.5 h-2.5 text-indigo-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
+              </div>
+              <span class="text-sm text-slate-400">Réponses instantanées depuis votre base de connaissance</span>
+            </div>
+            <div class="flex items-center gap-3">
+              <div class="w-5 h-5 rounded-full bg-indigo-600/20 border border-indigo-500/20 flex items-center justify-center flex-shrink-0">
+                <svg class="w-2.5 h-2.5 text-indigo-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
+              </div>
+              <span class="text-sm text-slate-400">Notification temps réel sur les urgences</span>
+            </div>
+          </div>
+          <div class="mt-8 grid grid-cols-2 gap-4">
+            <div class="bg-slate-900 rounded-2xl p-4 border border-white/5 text-center">
+              <div class="text-xl font-bold text-white">&lt; 2 min</div>
+              <div class="text-xs text-slate-500 mt-1">Délai de traitement moyen</div>
+            </div>
+            <div class="bg-slate-900 rounded-2xl p-4 border border-white/5 text-center">
+              <div class="text-xl font-bold text-white">24h/24</div>
+              <div class="text-xs text-slate-500 mt-1">Disponibilité de l'agent</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TARIFS -->
+  <section id="tarifs" class="py-24 bg-slate-950">
+    <div class="relative max-w-7xl mx-auto px-6 lg:px-8">
+      <div class="text-center mb-16">
+        <span class="text-xs font-semibold text-atlas-400 tracking-widest uppercase">Tarifs</span>
+        <h2 class="mt-4 text-4xl md:text-5xl font-black tracking-tight text-white">
+          Simple. Transparent. Sans surprise.
+        </h2>
+      </div>
+
+      <div class="grid md:grid-cols-3 gap-6 max-w-5xl mx-auto">
+        <!-- Pilote -->
+        <div class="bg-white/5 border border-white/10 rounded-3xl p-8">
+          <h3 class="text-lg font-bold text-white mb-1">Pilote</h3>
+          <p class="text-slate-500 text-sm mb-6">1 agent · Idéal pour commencer</p>
+          <div class="mb-6">
+            <span class="text-3xl font-black text-white">1 190 €</span>
+            <span class="text-slate-500 text-sm"> HT mise en place</span>
+            <div class="text-atlas-400 font-semibold mt-1">+ 179 €/mois HT</div>
+          </div>
+          <ul class="space-y-3 mb-8 text-sm text-slate-400">
+            <li class="flex items-center gap-2"><span class="text-atlas-400">✓</span> Atlas Relance</li>
+            <li class="flex items-center gap-2"><span class="text-atlas-400">✓</span> Rapport mensuel</li>
+            <li class="flex items-center gap-2"><span class="text-atlas-400">✓</span> Support email</li>
+          </ul>
+          <a href="#contact" class="block text-center bg-white/10 hover:bg-white/15 text-white font-semibold px-6 py-3 rounded-xl transition-colors text-sm">Démarrer</a>
+        </div>
+
+        <!-- Standard -->
+        <div class="bg-atlas-600/10 border-2 border-atlas-500/40 rounded-3xl p-8 relative">
+          <div class="absolute -top-3 left-1/2 -translate-x-1/2 bg-atlas-500 text-white text-xs font-bold px-4 py-1 rounded-full">Recommandé</div>
+          <h3 class="text-lg font-bold text-white mb-1">Standard</h3>
+          <p class="text-slate-400 text-sm mb-6">1 agent · Version complète</p>
+          <div class="mb-6">
+            <span class="text-3xl font-black text-white">1 500 €</span>
+            <span class="text-slate-500 text-sm"> HT mise en place</span>
+            <div class="text-atlas-400 font-semibold mt-1">+ 290 €/mois HT</div>
+          </div>
+          <ul class="space-y-3 mb-8 text-sm text-slate-300">
+            <li class="flex items-center gap-2"><span class="text-atlas-400">✓</span> Atlas Relance (email + WhatsApp)</li>
+            <li class="flex items-center gap-2"><span class="text-atlas-400">✓</span> Rapport mensuel détaillé</li>
+            <li class="flex items-center gap-2"><span class="text-atlas-400">✓</span> Support prioritaire</li>
+            <li class="flex items-center gap-2"><span class="text-atlas-400">✓</span> Tableau de bord</li>
+          </ul>
+          <a href="#contact" class="block text-center bg-atlas-600 hover:bg-atlas-500 text-white font-semibold px-6 py-3 rounded-xl transition-colors text-sm">Démarrer</a>
+        </div>
+
+        <!-- Duo -->
+        <div class="bg-white/5 border border-white/10 rounded-3xl p-8">
+          <h3 class="text-lg font-bold text-white mb-1">Duo</h3>
+          <p class="text-slate-500 text-sm mb-6">2 agents · Impact maximal</p>
+          <div class="mb-6">
+            <span class="text-3xl font-black text-white">2 900 €</span>
+            <span class="text-slate-500 text-sm"> HT mise en place</span>
+            <div class="text-atlas-400 font-semibold mt-1">+ 490 €/mois HT</div>
+          </div>
+          <ul class="space-y-3 mb-8 text-sm text-slate-400">
+            <li class="flex items-center gap-2"><span class="text-atlas-400">✓</span> Atlas Relance + Atlas Flow</li>
+            <li class="flex items-center gap-2"><span class="text-atlas-400">✓</span> Tous canaux</li>
+            <li class="flex items-center gap-2"><span class="text-atlas-400">✓</span> Support dédié</li>
+            <li class="flex items-center gap-2"><span class="text-atlas-400">✓</span> Bilan trimestriel</li>
+          </ul>
+          <a href="#contact" class="block text-center bg-white/10 hover:bg-white/15 text-white font-semibold px-6 py-3 rounded-xl transition-colors text-sm">Démarrer</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA FINAL -->
+  <section id="contact" class="py-24 bg-slate-950 border-t border-white/5">
+    <div class="max-w-3xl mx-auto px-6 text-center">
+      <h2 class="text-4xl md:text-5xl font-black text-white mb-6">
+        Prêt à voir ce qu'un agent peut faire <span class="text-gradient">pour votre activité ?</span>
+      </h2>
+      <p class="text-slate-400 text-lg mb-10">
+        Diagnostic gratuit de 30 minutes. On analyse vos flux, on identifie les gains rapides. Sans engagement.
+      </p>
+      <a href="mailto:contact@atlasops.fr" class="inline-flex items-center gap-2 bg-atlas-600 hover:bg-atlas-500 text-white font-semibold px-10 py-5 rounded-xl text-lg transition-all shadow-xl shadow-atlas-900/40">
+        Prendre rendez-vous
+        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+      </a>
+      <p class="mt-4 text-sm text-slate-600">contact@atlasops.fr · atlasops.fr</p>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="bg-slate-950 border-t border-white/5 py-8">
+    <div class="max-w-7xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-4">
+      <span class="text-white font-black">ATLAS <span class="text-atlas-400">OPS</span></span>
+      <p class="text-slate-600 text-sm">© 2026 Atlas Ops · contact@atlasops.fr · atlasops.fr</p>
+      <div class="flex gap-6 text-sm text-slate-600">
+        <a href="#" class="hover:text-slate-400 transition-colors">Mentions légales</a>
+        <a href="#" class="hover:text-slate-400 transition-colors">CGV</a>
+        <a href="#" class="hover:text-slate-400 transition-colors">RGPD</a>
+      </div>
+    </div>
+  </footer>
+
+</body>
+</html>
